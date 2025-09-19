@@ -274,6 +274,8 @@ header {
   margin: var(--space-md) 12px 22px;
   display: flex;
   gap: 10px;
+  /* Ensure CTA stays above images/dots */
+  z-index: 9999;
 }
 
 .btn {
