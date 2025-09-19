@@ -115,8 +115,8 @@ function setupEventHandlers() {
     const rsvpBtn = document.getElementById('btnRsvp');
     if (rsvpBtn) {
         rsvpBtn.addEventListener('click', () => {
-            const msg = encodeURIComponent(`Hello, I would like to RSVP for the Elder's Farewell Service at Berea Mega Church on ${INVITE.date}, ${INVITE.time}.`);
-            window.open(`https://wa.me/27605023284?text=${msg}`, '_blank');
+            const msg = encodeURIComponent(`Hello, I would like to RSVP for Elder M Sibanda's Farewell Service at Zaoga Forward In Faith — Berea Mega Church on ${INVITE.date}, ${INVITE.time}.`);
+            window.open(`https://wa.me/27611215709?text=${msg}`, '_blank');
         });
     }
 
@@ -141,4 +141,49 @@ document.addEventListener('DOMContentLoaded', () => {
     initCountdown();
     initGallery();
     setupEventHandlers();
+    initAudioAutoplay();
 });
+
+// --- Audio Autoplay (with graceful fallback) ---
+function initAudioAutoplay() {
+    const audio = document.getElementById('bgAudio');
+    if (!audio) return;
+
+    // Try to autoplay; many browsers block this. If blocked, show prompt and
+    // start playback on first user interaction.
+    const tryPlay = () => audio.play();
+
+    tryPlay().catch(() => {
+        // Create a small prompt button to enable sound
+        const btn = document.createElement('button');
+        btn.id = 'audioPrompt';
+        btn.textContent = 'Tap to enable sound';
+        btn.style.position = 'fixed';
+        btn.style.left = '50%';
+        btn.style.transform = 'translateX(-50%)';
+        btn.style.bottom = '92px'; // keep above sticky CTA
+        btn.style.zIndex = '10000';
+        btn.style.padding = '10px 14px';
+        btn.style.border = '1px solid #ccd6ff';
+        btn.style.borderRadius = '999px';
+        btn.style.background = '#001E66';
+        btn.style.color = '#fff';
+        btn.style.fontWeight = '700';
+        btn.style.fontFamily = 'Poppins, system-ui, Segoe UI, Roboto, Ubuntu, Arial';
+
+        const enable = () => {
+            tryPlay().then(() => {
+                if (btn.parentNode) btn.parentNode.removeChild(btn);
+                document.removeEventListener('pointerdown', enable);
+                document.removeEventListener('keydown', enable);
+            }).catch(() => {
+                // keep button if still blocked
+            });
+        };
+
+        btn.addEventListener('click', enable);
+        document.addEventListener('pointerdown', enable);
+        document.addEventListener('keydown', enable);
+        document.body.appendChild(btn);
+    });
+}
